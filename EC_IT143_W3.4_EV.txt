@@ -1,0 +1,96 @@
+/*****************************************************************************************************************
+NAME:    W3.4 ADVENTURE WORKS-CREAT ANSWERS
+PURPOSE: TRANSLATE USER QUESTIONS INTO SQL STATEMENTS 
+
+MODIFICATION LOG:
+Ver      Date        Author        Description
+-----   ----------   -----------   -------------------------------------------------------------------------------
+1.0     05/23/2022   EEVC       1. Built this script for EC IT143
+
+
+RUNTIME: 
+Xm 1s
+
+NOTES: 
+BUILT FOR  W3.4 ADVENTURE WORKS-CREAT ANSWERS- EIGHT QUESTIONS IN TOTAL
+ 
+******************************************************************************************************************/
+
+-- Q1: What are our top ten older employee in term of birth date?
+-- A1: HERE IT IS
+
+SELECT TOP (10) BIRTHDATE
+	,FIRSTNAME
+	,LASTNAME 
+FROM [AdventureWorks2019].[HumanResources].[Employee]
+INNER JOIN [AdventureWorks2019].[Person].[Person]
+ON [AdventureWorks2019].[HumanResources].[Employee].BusinessEntityID = [AdventureWorks2019].[Person].[Person].BusinessEntityID
+ORDER BY BIRTHDATE 
+
+-- Q2: How many product categories are there in the database? 
+-- A2: HERE IT IS
+SELECT COUNT(ProductCategoryID) 
+	AS "NUMBER OF CATEGORIES" 
+	FROM [AdventureWorks2019].[Production].[ProductCategory] 
+-- Q3: What is the total number of employees assigned to the Sales department in Adventure Works Cycles? 
+-- A3: HERE IT IS
+SELECT COUNT(BusinessEntityID) AS TotalNumEmployeeInSales
+FROM [AdventureWorks2019].[HumanResources].[EmployeeDepartmentHistory]
+WHERE DepartmentID=3  --DEPARTMENTIDV 3 IS FOR SALES
+ 
+-- Q4: What are the top five sales territories by total sales amount in the sales table? Include the corresponding region. 
+-- A4: HERE IT IS
+
+SELECT TOP 5 (TerritoryID)
+	,CountryRegionCode
+	,"Name"
+	,[Group]
+	,[SalesYTD]
+FROM [AdventureWorks2019].[Sales].[SalesTerritory]
+ORDER BY [SalesYTD] DESC
+
+-- Q5: We are phasing out Vista credit cards throughout the entire company, however we only want to make the transition by increments. Determine which CreditCardIDs expire first and how many of those are Vista cards. Return a list of all the owners of those cards including their email address. We can only replace the cards of the first 50 employees for now, so do not return more names than that.
+-- A5: HERE IT IS
+
+SELECT TOP (50) [CardType]
+      ,[ExpMonth]
+      ,[ExpYear]
+	  ,FirstName
+	  ,LastName
+	  ,EmailAddress
+  FROM [AdventureWorks2019].[Sales].[CreditCard]
+  INNER JOIN [AdventureWorks2019].Sales.PersonCreditCard
+  ON [AdventureWorks2019].[Sales].[CreditCard].CreditCardID=[AdventureWorks2019].Sales.PersonCreditCard.CreditCardID
+  INNER JOIN [AdventureWorks2019].Person.Person 
+  ON [AdventureWorks2019].Person.Person.BusinessEntityID=[AdventureWorks2019].Sales.PersonCreditCard.BusinessEntityID
+  INNER JOIN [AdventureWorks2019].Person.EmailAddress
+  ON [AdventureWorks2019].Person.Person.BusinessEntityID=[AdventureWorks2019].Person.EmailAddress.BusinessEntityID
+  ORDER BY ExpYEAR, EXPMONTH 
+
+-- Q6: the names of theproducts that haven’t sold and have a high stock, can you create a list that will tell me this information by order location?.
+-- A6: HERE IT IS
+SELECT DISTINCT TOP 10 [ProductNumber]
+	,[Name]
+	,[StockedQty]
+	,[LocationID]
+
+FROM [AdventureWorks2019].[Production].[WorkOrder]
+INNER JOIN [AdventureWorks2019].[Production].[WorkOrderRouting]
+ON [AdventureWorks2019].[Production].[WorkOrder].[ProductID]=[AdventureWorks2019].[Production].[WorkOrderRouting].ProductID
+INNER JOIN [AdventureWorks2019].[Production].[Product]
+ON [AdventureWorks2019].[Production].[WorkOrder].ProductID =  [AdventureWorks2019].[Production].[Product].ProductID
+ORDER BY [StockedQty] DESC
+
+-- Q7: Can you tell me how many tables in the database are related to the sales category?
+-- A7: HERE IT IS
+SELECT COUNT(TABLE_NAME) AS TABLE_SALES
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME LIKE 'SALE%';
+
+-- Q8: List all tables in AdventureWorks that contain the column “TerritoryID”
+-- A8: HERE IT IS
+SELECT TABLE_NAME, COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE COLUMN_NAME IN('TerritoryID')
+
+
